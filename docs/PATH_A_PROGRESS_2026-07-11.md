@@ -64,6 +64,17 @@
 | Tests | **47 passed** |
 | Git | **no commit** |
 
+
+## Loop 6 — gold n≈50 + 桃園區映射 (after commit d96d429)
+
+| Item | Evidence |
+|------|----------|
+| git commit | `d96d429` modular package + eval harness |
+| 中壢等 | `TAIWAN_REGION_MAPPING` 桃園/新竹/台中擴充 |
+| `examples/sample_travel_gold_50.csv` | **52** rows, kind/mode accuracy **1.0** offline |
+| Tests | **48 passed** |
+
+
 ## Still open (next loops)
 
 - [ ] Public GitHub remote (user creates; fill PLACEHOLDER URLs)

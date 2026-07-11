@@ -77,3 +77,10 @@ def test_classify_trip_kind():
     assert classify_trip_kind("台中") == "mainland"
     assert classify_trip_kind("金門") == "island"
     assert classify_trip_kind("東京") == "international"
+
+
+def test_zhongli_maps_to_taoyuan_mainland():
+    assert TAIWAN_REGION_MAPPING["中壢"] == "桃園"
+    assert is_domestic("中壢") is True
+    assert classify_trip_kind("中壢") == "mainland"
+    assert resolve_coordinates("中壢") is not None
