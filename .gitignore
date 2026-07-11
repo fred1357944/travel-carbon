@@ -1,0 +1,62 @@
+# Secrets / local env
+.env
+.env.*
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+.env/
+*.egg-info/
+.eggs/
+dist/
+build/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# Project caches & generated maps (large / reproducible)
+.cache/
+maps/
+*.pkl
+map_cache.json
+route_cache.pkl
+
+# Real travel ledgers & results (may contain PII)
+*.xlsx
+*.xls
+*.xlsm
+~$*
+!examples/**/*.xlsx
+!examples/**/*.csv
+
+# Keep example fixtures
+!examples/
+!examples/**
+
+# Local notes / backups
+*.bak
+*.bak-*
+*.hollow-backup-*
+.claude/
+
+# Intermediate location extracts (may reflect real ledgers)
+location-identification*
+出差地點整理結果*
+國際航線測試資料.csv

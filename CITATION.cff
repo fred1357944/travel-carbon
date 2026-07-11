@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "travel-carbon: Distance-based Scope 3 business-travel helpers for Traditional Chinese university ledgers"
+version: 0.1.0
+date-released: "2026-07-11"
+license: MIT
+authors:
+  - family-names: Lai
+    given-names: Hung-Yi
+    alias: 賴弘翌
+abstract: >-
+  Open Python helpers and desktop workflow for estimating university business-travel
+  distances and CO2e from free-text Traditional Chinese reimbursement ledgers
+  using a GHG Protocol Scope 3 Category 6 distance-based approach.
+keywords:
+  - greenhouse gas
+  - Scope 3
+  - business travel
+  - higher education
+  - Taiwan
+  - carbon footprint
