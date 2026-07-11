@@ -13,8 +13,8 @@ from .carbon import (
     sensitivity_compare,
 )
 from .pipeline import estimate_trip
-from .eval_batch import evaluate_gold_csv
 from .maps_meta import route_map_meta
+# evaluate_gold_csv is available as travel_carbon.eval_batch (avoid -m import warning)
 from .data import (
     ALIASES,
     CHINA_KEYWORDS,
@@ -63,7 +63,6 @@ __all__ = [
     "reload_emission_factors",
     "sensitivity_compare",
     "estimate_trip",
-    "evaluate_gold_csv",
     "route_map_meta",
 ]
 

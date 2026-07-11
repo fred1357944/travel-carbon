@@ -75,18 +75,28 @@
 | Tests | **48 passed** |
 
 
+## Loop 7 — JOSS polish (2026-07-11)
+
+| Item | Evidence |
+|------|----------|
+| `paper/paper.md` | Rewritten with library API + gold *n*=52 QA; factor honesty |
+| `paper/paper.bib` | Added Valls-Val 2021, Kiehle, Tsai 2025, Lee 2021 |
+| `docs/JOSS_CHECKLIST.md` | Submission gate list |
+| `.github/workflows/ci.yml` | pytest + offline eval on 3.10/3.12 |
+| Import warning | `evaluate_gold_csv` no longer eagerly imported in `__init__` |
+
 ## Still open (next loops)
 
-- [ ] Public GitHub remote (user creates; fill PLACEHOLDER URLs)
+- [ ] **Public GitHub remote** (blocker for JOSS)
 - [x] Extract gazetteer + location resolve into package + tests (offline)
 - [x] Extract distance helpers (geodesic / OSRM client) with offline geodesic tests
 - [x] Load factors from `factors.yaml` + sensitivity profile
-- [x] Offline gold eval harness (n=10 synthetic; scale to 50–100 later)
+- [x] Offline gold eval harness (*n*≈52 synthetic)
+- [x] JOSS paper draft + checklist + CI workflow file
 - [ ] Optional full Folium map builder extract (low priority)
-- [ ] Larger anonymized evaluation n=50–100 on real-like data
+- [ ] Larger anonymized evaluation on real-like ledgers
 - [ ] Zenodo / archive DOI
 - [ ] Author ORCID / affiliation confirm
-- [ ] Git commit when user allows
 
 ## Do not
 
