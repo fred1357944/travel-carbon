@@ -3,6 +3,10 @@
 > Distance-based **Scope 3 Category 6** helpers and desktop workflow for **Traditional Chinese** university business-travel ledgers
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI](https://github.com/fred1357944/travel-carbon/actions/workflows/ci.yml/badge.svg)](https://github.com/fred1357944/travel-carbon/actions/workflows/ci.yml)
+[![GitHub](https://img.shields.io/badge/GitHub-fred1357944%2Ftravel--carbon-blue)](https://github.com/fred1357944/travel-carbon)
+
+**Repository:** https://github.com/fred1357944/travel-carbon
 
 ## What this is
 
@@ -18,6 +22,9 @@ This is **not** a full multi-scope campus GHG platform (compare GES 1point5, CO2
 ## Install (library + tests)
 
 ```bash
+# from a clone
+git clone https://github.com/fred1357944/travel-carbon.git
+cd travel-carbon
 python3 -m pip install -e ".[dev]"
 pytest -q
 python3 -c "from travel_carbon import calculate_carbon_emission as c; print(c('國際-飛行', 1000))"
@@ -27,8 +34,10 @@ python3 -m travel_carbon 台中
 python3 -m travel_carbon 日本 --profile taiwan_cfp
 python3 -m travel_carbon 金門 --json
 
-# offline gold evaluation (synthetic 10-row set)
-python3 -m travel_carbon.eval_batch --out-dir outputs/eval
+# offline gold evaluation (synthetic ~50-row set)
+python3 -m travel_carbon.eval_batch \
+  --gold examples/sample_travel_gold_50.csv \
+  --out-dir outputs/eval
 # → kind_accuracy / mode_accuracy + report.md
 ```
 
@@ -92,11 +101,11 @@ See `CITATION.cff` and `paper/paper.md`.
 
 ```bibtex
 @software{lai_travel_carbon,
-  title  = {travel-carbon: Distance-based Scope 3 helpers for Chinese university travel ledgers},
-  author = {Lai, Hung-Yi},
-  year   = {2026},
+  title   = {travel-carbon: Distance-based Scope 3 helpers for Chinese university travel ledgers},
+  author  = {Lai, Hung-Yi},
+  year    = {2026},
   version = {0.1.0},
-  note   = {Software repository}
+  url     = {https://github.com/fred1357944/travel-carbon}
 }
 ```
 
@@ -106,4 +115,4 @@ MIT — see `LICENSE`.
 
 ## Status
 
-**v0.1.0 alpha** — packaging and unit tests for core pure functions; GUI remains the operational entry point. Path A (JOSS/SoftwareX) engineering is in progress.
+**v0.1.0 alpha** — installable library, offline gold eval, CI, JOSS paper draft (`paper/paper.md`). GUI remains the operational batch entry point. See `docs/JOSS_CHECKLIST.md`.

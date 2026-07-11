@@ -7,7 +7,7 @@ Status snapshot: **2026-07-11**, package `travel-carbon` **v0.1.0**, local git o
 | Item | Status | Notes |
 |------|--------|-------|
 | Open-source license | ✅ | MIT `LICENSE` |
-| Public repository | ❌ | Create GitHub/GitLab; fill README/paper URLs |
+| Public repository | ✅ | https://github.com/fred1357944/travel-carbon |
 | Installable package | ✅ | `pip install -e ".[dev]"` / `pyproject.toml` |
 | Automated tests | ✅ | `pytest` — 48 passed |
 | Example that runs | ✅ | `python -m travel_carbon 台中`; `examples/` |

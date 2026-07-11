@@ -18,6 +18,7 @@ affiliations:
     index: 1
 date: 11 July 2026
 bibliography: paper.bib
+repository: https://github.com/fred1357944/travel-carbon
 ---
 
 # Summary

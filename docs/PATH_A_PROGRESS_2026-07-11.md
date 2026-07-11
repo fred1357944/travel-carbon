@@ -87,7 +87,7 @@
 
 ## Still open (next loops)
 
-- [ ] **Public GitHub remote** (blocker for JOSS)
+- [x] **Public GitHub remote**: https://github.com/fred1357944/travel-carbon
 - [x] Extract gazetteer + location resolve into package + tests (offline)
 - [x] Extract distance helpers (geodesic / OSRM client) with offline geodesic tests
 - [x] Load factors from `factors.yaml` + sensitivity profile

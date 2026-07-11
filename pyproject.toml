@@ -41,8 +41,8 @@ dev = ["pytest>=7.0", "pytest-cov>=4.0"]
 maps = ["selenium>=4.0"]
 
 [project.urls]
-Homepage = "https://github.com/PLACEHOLDER/travel-carbon"
-Documentation = "https://github.com/PLACEHOLDER/travel-carbon#readme"
+Homepage = "https://github.com/fred1357944/travel-carbon"
+Documentation = "https://github.com/fred1357944/travel-carbon#readme"
 
 [tool.setuptools.packages.find]
 where = ["src"]
