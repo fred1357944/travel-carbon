@@ -22,17 +22,64 @@
 2. **JOSS paper draft** — complementary framing vs GES1point5 / CO2UNV / Auger.  
 3. **MOENV audit** — 113-02-05 is **fuel kg/TJ**, not pkm; only HSR 0.034 clearly matches CFP; car/air defaults must not claim 環境部公告.
 
+## Loop 2 — gazetteer extract (2026-07-11, **not git-committed** per user)
+
+| Item | Evidence |
+|------|----------|
+| `src/travel_carbon/data/` | coordinates / aliases / mappings (from GUI) |
+| `src/travel_carbon/locations/resolve.py` | smart_destination_handler, is_domestic, resolve_coordinates, classify_trip_kind |
+| GUI slim | ~2469 → **~1451** lines; imports package data + delegates methods |
+| Tests | **26 passed** (was 15) via `tests/test_locations.py` |
+| Git | working tree dirty; **no commit** (user: 繼續不要進 git) |
+
+## Loop 3 — distance package (2026-07-11, **not git-committed**)
+
+| Item | Evidence |
+|------|----------|
+| `src/travel_carbon/distance/` | geodesic.py, osrm.py, compute.py |
+| Offline API | `compute_driving_distance(..., use_osrm=False)`, island + international flight |
+| GUI | three distance methods are thin wrappers; GUI ~**1143** lines |
+| Tests | **35 passed** (`tests/test_distance.py`) |
+| Git | still **no commit** |
+
+## Loop 4 — factors.yaml + pipeline CLI (2026-07-11, **not git-committed**)
+
+| Item | Evidence |
+|------|----------|
+| `get_emission_factors("screening"\|"taiwan_cfp")` | YAML-backed; CFP profile drops car 0.21→0.115 |
+| `estimate_trip()` | `pipeline.py` offline E2E |
+| CLI | `python -m travel_carbon 台中` |
+| Tests | **43 passed** |
+| Git | **no commit** |
+
+## Loop 5 — offline gold eval + map meta (2026-07-11, **not git-committed**)
+
+| Item | Evidence |
+|------|----------|
+| `examples/sample_travel_gold.csv` | 10-row gold kinds |
+| `python -m travel_carbon.eval_batch` | kind/mode accuracy **1.0** on gold |
+| `outputs/eval/report.md` | local artifact (gitignored) |
+| empty dest → `unknown` | fixed (was misclassified international) |
+| `maps_meta.route_map_meta` | center/zoom without Folium |
+| Tests | **47 passed** |
+| Git | **no commit** |
+
 ## Still open (next loops)
 
 - [ ] Public GitHub remote (user creates; fill PLACEHOLDER URLs)
-- [ ] Extract gazetteer + location resolve into package + tests (offline)
-- [ ] Optional: load factors from `data/factors.yaml`
-- [ ] Anonymized evaluation n=50–100 (not blocking JOSS minimum)
+- [x] Extract gazetteer + location resolve into package + tests (offline)
+- [x] Extract distance helpers (geodesic / OSRM client) with offline geodesic tests
+- [x] Load factors from `factors.yaml` + sensitivity profile
+- [x] Offline gold eval harness (n=10 synthetic; scale to 50–100 later)
+- [ ] Optional full Folium map builder extract (low priority)
+- [ ] Larger anonymized evaluation n=50–100 on real-like data
 - [ ] Zenodo / archive DOI
 - [ ] Author ORCID / affiliation confirm
+- [ ] Git commit when user allows
 
 ## Do not
 
 - Commit real `*.xlsx` or `maps/`
 - Claim “符合環境部 113 公告” for current defaults
 - Submit JOSS before public repo + clean install path verified on a second machine
+- Auto-commit while user said 不要進 git

@@ -33,6 +33,7 @@ dependencies = [
   "geopy>=2.2",
   "requests>=2.25",
   "pillow>=9.0",
+  "PyYAML>=5.4",
 ]
 
 [project.optional-dependencies]
@@ -45,6 +46,12 @@ Documentation = "https://github.com/PLACEHOLDER/travel-carbon#readme"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+travel_carbon = ["data/*.yaml"]
+
+[project.scripts]
+travel-carbon = "travel_carbon.__main__:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

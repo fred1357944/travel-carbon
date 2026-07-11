@@ -21,9 +21,26 @@ This is **not** a full multi-scope campus GHG platform (compare GES 1point5, CO2
 python3 -m pip install -e ".[dev]"
 pytest -q
 python3 -c "from travel_carbon import calculate_carbon_emission as c; print(c('國際-飛行', 1000))"
+
+# offline one-shot demo (no GUI)
+python3 -m travel_carbon 台中
+python3 -m travel_carbon 日本 --profile taiwan_cfp
+python3 -m travel_carbon 金門 --json
+
+# offline gold evaluation (synthetic 10-row set)
+python3 -m travel_carbon.eval_batch --out-dir outputs/eval
+# → kind_accuracy / mode_accuracy + report.md
 ```
 
-Package code lives in `src/travel_carbon/` (carbon factors, mode heuristics, zoom, place-text helpers).
+Package code lives in `src/travel_carbon/`:
+
+| Module | Role |
+|--------|------|
+| `data/` | Gazetteer coordinates, aliases, mappings, `factors.yaml` |
+| `locations/` | Free-text resolve / domestic-island-international classify |
+| `distance/` | Geodesic + optional OSRM driving |
+| `carbon/` | Mode heuristics + factor profiles (`screening` / `taiwan_cfp`) |
+| `pipeline` | `estimate_trip()` end-to-end helper |
 
 ## Desktop GUI
 

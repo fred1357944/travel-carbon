@@ -1,0 +1,48 @@
+meta:
+  schema_version: "1.0"
+  purpose: "GHG Protocol Scope 3 Category 6 distance-based screening"
+  unit_default: "kg_CO2e_per_km"
+  last_reviewed: "2026-07-11"
+  disclaimer: >
+    Operational screening factors. NOT a direct mapping to MOENV 113-02-05
+    fuel combustion factors (kg/TJ). Prefer product CFP pkm factors for
+    formal Taiwan inventory; document any deviation.
+
+project_screening_defaults:
+  自用車/計程車:
+    factor: 0.21
+    match_official: false
+    notes: "Higher than CFP 自用0.115 / 營業0.133"
+  國內航班:
+    factor: 0.133
+    match_official: false
+    notes: "Equals 營業小客車 CFP numerically, not aviation"
+  國際航班:
+    factor: 0.101
+    match_official: false
+    notes: "No MOENV generic international pkm factor"
+  火車/高鐵:
+    factor: 0.034
+    match_official: partial
+    notes: "Matches 2018 HSR CFP 0.034; over-simplifies TRA"
+  巴士:
+    factor: 0.065
+    match_official: approx
+    notes: "Mid of Taiwan bus/coach CFP band ~0.044–0.094"
+
+recommended_taiwan_cfp_pkm:
+  自用小客車_汽油: { factor: 0.115, year: 2014, source: CFP_P_02 }
+  營業小客車_汽油: { factor: 0.133, year: 2014, source: CFP_P_02 }
+  高速鐵路運輸服務: { factor: 0.034, year: 2018, source: CFP_P_02 }
+  自用大客車_柴油: { factor: 0.0606, year: 2014, source: CFP_P_02 }
+  營業大客車_市區公路客運_柴油: { factor: 0.0944, year: 2014, source: CFP_P_02 }
+  航空_松山_金門: { factor: 0.281, year: 2018, source: CFP_P_02, notes: "route-specific" }
+
+sources:
+  moenv_113_2024_02_05:
+    role: "organization inventory fuel factors kg/TJ"
+    passenger_pkm_factors: false
+    url_pdf: "https://ghgregistry.moenv.gov.tw/upload/Tools/AI/113年2月5日公告溫室氣體排放係數.pdf"
+  moenv_product_cfp:
+    role: "product/service pkm factors"
+    passenger_pkm_factors: true

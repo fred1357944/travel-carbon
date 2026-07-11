@@ -1,0 +1,11 @@
+序號,目的地,expected_kind,expected_mode_contains,notes
+1,台北市,mainland,開車,city
+2,板橋,mainland,開車,district
+3,臺中市,mainland,開車,tai variant
+4,高雄,mainland,開車,city
+5,澎湖,island,離島,offshore
+6,東京,international,國際,intl city may map to japan hub
+7,上海,international,國際,china
+8,新加坡,international,國際,intl
+9,,unknown,,empty
+10,南港,mainland,開車,district
