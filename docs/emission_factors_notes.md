@@ -2,22 +2,20 @@
 
 ## Defaults shipped in code (`travel_carbon.carbon`)
 
-| Mode (GUI label) | Factor (kg CO₂e/km) | Role |
-|------------------|---------------------|------|
-| 自用車/計程車 | 0.21 | Default car/taxi |
-| 國內航班 | 0.133 | Domestic / island air |
-| 國際航班 | 0.101 | International air |
-| 火車/高鐵 | 0.034 | Rail / HSR heuristic |
-| 巴士 | 0.065 | Bus (available; mode heuristic rarely selects) |
+| Mode (GUI label) | Factor (kg CO₂e/km) | vs Taiwan official (honest) |
+|------------------|---------------------|-----------------------------|
+| 自用車/計程車 | 0.21 | **No match.** CFP 自用小客車 0.115 / 營業小客車 0.133 pkm (2014). Project is higher. |
+| 國內航班 | 0.133 | **No generic MOENV match.** Numerically equals 營業小客車, not aviation. Route example 松山–金門 CFP 0.281 (2018). |
+| 國際航班 | 0.101 | **No MOENV generic pkm factor.** Use ICAO / foreign libraries; disclose RFI separately. |
+| 火車/高鐵 | 0.034 | **Partial match** to 高鐵 CFP 2018 (0.034). Over-simplifies 臺鐵 (higher). |
+| 巴士 | 0.065 | **Approx** mid of CFP bus/coach band ~0.044–0.094. |
 
-These are **simplified operational defaults** used by the desktop tool. Historical GUI comments referred to “台灣環保署 2023-style” values. **Do not claim full compliance** with Taiwan MOENV statutory tables until each row is reconciled to the official ODS/PDF for the inventory year.
+These are **simplified operational screening defaults**.  
+Historical GUI comments (“環保署 2023”) are **overclaims** relative to both:
 
-## Official sources to reconcile (before journal/JOSS claims)
-
-1. 環境部事業溫室氣體排放量資訊平台 — **113年2月5日公告溫室氣體排放係數**  
-   https://ghgregistry.moenv.gov.tw/epa_ghg/Downloads/FileDownloads.aspx?Type_ID=1
-2. 《溫室氣體排放量盤查作業指引》113年版  
-3. Optional international benchmarks (comparison only): UK DESNZ conversion factors; ICAO ICEC (aviation CO₂ methodology)
+1. **環境部 113-02-05 公告溫室氣體排放係數** — fuel combustion **kg/TJ** for organizational inventory, **not** passenger-km.  
+   https://ghgregistry.moenv.gov.tw/upload/Tools/AI/113年2月5日公告溫室氣體排放係數.pdf  
+2. **產品碳足跡資訊網 / CFP_P_02** — the real source class for Taiwan **pkm** service factors.
 
 ## Mode heuristics (must disclose)
 
@@ -29,12 +27,24 @@ These are **simplified operational defaults** used by the desktop tool. Historic
 | Label contains `開車` and distance ≤ 300 km | Car/taxi |
 | Otherwise by distance | >500 km domestic air; >300 km rail; else car |
 
-These are **not** observed booking modes. Sensitivity analysis is recommended for any institutional total.
+Not observed booking modes. Run sensitivity for institutional totals.
 
 ## Radiative forcing (RFI)
 
-Default calculations are **without** aviation non-CO₂ / RFI multipliers. GHG Protocol allows RF multipliers only if disclosed. ICAO ICEC is CO₂-oriented. If RFI is applied, report the factor and literature basis separately.
+Defaults are **without** aviation non-CO₂ / RFI. Disclose if applied.
 
-## Suggested Methods wording (English)
+## Suggested Methods wording
 
-> We apply a distance-based approach consistent with GHG Protocol Scope 3 Category 6 guidance: emissions equal distance multiplied by a mode-specific emission factor. Default factors are simplified operational values distributed with the software; users should substitute Taiwan MOENV announced factors (or another chosen database) for formal inventory reporting. Transport mode is inferred from voucher labels and distance heuristics when the ledger does not record mode. Aviation radiative forcing is not included in the default results.
+> We apply a distance-based approach consistent with GHG Protocol Scope 3 Category 6: emissions ≈ distance × mode factor. Shipped factors are **screening defaults**, not a line-item mapping to MOENV’s 5 Feb 2024 fuel-factor gazette (kg/TJ). Among defaults, only HSR 0.034 aligns with the 2018 product-CFP high-speed-rail entry; car and aviation defaults should be recalibrated (CFP car 0.115/0.133; aviation via ICAO or route-specific CFP) before formal ISO 14064-1 reporting.
+
+## Recommended sensitivity set (Taiwan-facing)
+
+| Mode | Factor | Source |
+|------|--------|--------|
+| 自用小客車 | 0.115 kg/pkm | CFP_P_02 2014 |
+| 營業小客車/計程車 | 0.133 kg/pkm | CFP_P_02 2014 |
+| 高鐵 | 0.034 kg/pkm | CFP_P_02 2018 |
+| 巴士/客運 band | 0.044–0.094 kg/pkm | CFP_P_02 |
+| 國內航空 (example) | 0.281 kg/pkm 松山–金門 | CFP_P_02 2018 (route-specific) |
+
+Machine-readable draft: `data/factors.yaml`.
