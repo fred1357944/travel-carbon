@@ -85,6 +85,17 @@
 | `.github/workflows/ci.yml` | pytest + offline eval on 3.10/3.12 |
 | Import warning | `evaluate_gold_csv` no longer eagerly imported in `__init__` |
 
+
+## Loop 8 — public GitHub via `gh` (2026-07-11)
+
+| Item | Evidence |
+|------|----------|
+| Repo | https://github.com/fred1357944/travel-carbon |
+| Push | `main` + tag `v0.1.0` |
+| Release | https://github.com/fred1357944/travel-carbon/releases/tag/v0.1.0 |
+| CI | **success** (Python 3.10 + 3.12) |
+
+
 ## Still open (next loops)
 
 - [x] **Public GitHub remote**: https://github.com/fred1357944/travel-carbon

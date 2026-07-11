@@ -15,7 +15,9 @@ Status snapshot: **2026-07-11**, package `travel-carbon` **v0.1.0**, local git o
 | Statement of need | ✅ | Complements GES1point5 / CO2UNV / Auger |
 | CITATION.cff | ✅ | Root |
 | No secrets / PII in repo | ✅ | `.gitignore` blocks `*.xlsx`, `maps/`, `outputs/` |
-| Archive (Zenodo) DOI | ❌ | After public release tag |
+| GitHub Release tag | ✅ | [v0.1.0](https://github.com/fred1357944/travel-carbon/releases/tag/v0.1.0) |
+| CI green | ✅ | Actions: pytest + offline eval on 3.10/3.12 |
+| Archive (Zenodo) DOI | ❌ | Optional next: Zenodo from GitHub release |
 
 ## Recommended before review
 
