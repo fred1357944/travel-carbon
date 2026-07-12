@@ -32,6 +32,10 @@ Prior research documents academic flying’s contribution to campus footprints [
 
 Less attention has been paid to the **operational data path** from messy East Asian administrative ledgers—free-text destinations, character variants (台/臺), district names—to distance-based Category 6 activity data. Spend-based methods are common when distances are missing, but they can be sensitive to prices and poor for year-on-year operational management [@ghgprotocol_cat6]. This paper addresses that gap with an open workflow and software package designed for Taiwanese HEI contexts.
 
+**Research questions.**  
+*RQ1:* What technical and organisational steps are required to turn free-text Traditional Chinese reimbursement ledgers into auditable distance-based Category 6 activity data?  
+*RQ2:* How sensitive are resulting screening totals to factor-profile choice and unresolved-destination handling?
+
 # 2. Related work and research gap
 
 ## 2.1 HEI carbon inventories and travel
@@ -78,19 +82,21 @@ Screening defaults shipped with the software are **operational** kg CO₂e/km va
 
 Unit tests and CI (Python 3.10/3.12) cover pure functions. A synthetic gold set (*n* = 52) labels expected trip kinds (mainland/island/international/unknown) and expected mode substrings. Metrics are **regression accuracies**, not independent multi-rater validation. Unresolved free-text strings are required to classify as `unknown` with zero distance (under-reporting risk if misused without review of unresolved rows).
 
-# 4. Results (synthetic evaluation)
+# 4. Results
 
-## 4.1 Trip-kind and mode-heuristic regression
+> **Note on synthetic metrics.** Trip-kind / mode-heuristic scores of 1.0 on the author-maintained gold set are reported under **§3.3 Quality assurance** as regression checks, **not** as independent validation findings.
 
-On `examples/sample_travel_gold_50.csv` (*n* = 52), offline evaluation (geodesic fallback, no public OSRM required) yields kind accuracy 1.0 and mode-heuristic accuracy 1.0 as **self-consistency / regression** metrics. Aggregate distance on this synthetic set is on the order of ~8.9×10⁴ km; screening CO₂e exceeds the `taiwan_cfp` profile aggregate because private-car factors are higher under screening.
+## 4.1 Factor sensitivity (workflow implication)
 
-## 4.2 Factor sensitivity
+Applying `sensitivity_compare` and dual-profile batch runs shows that, once distances exist, inventory-like totals are **factor-dominated**: moving private-car factors from screening 0.21 to CFP-oriented 0.115 kg/km changes leg-level CO₂e substantially [@ghgprotocol_cat6; @moenv_cfp]. Full-ledger tornado-style tables (screening vs `taiwan_cfp`, optional aviation RFI scenarios citing [@lee2021; @jungbluth2019]) are the primary quantitative result of the current draft; absolute campus CO₂e totals are **not** claimed without an authorised de-identified institutional year.
 
-Applying `sensitivity_compare` on representative legs (e.g. 100 km domestic road) shows large relative differences when car factors move from screening 0.21 to CFP-oriented 0.115 kg/km, underscoring that inventory totals are factor-dominated once distances exist [@ghgprotocol_cat6; @moenv_cfp].
+## 4.2 Failure modes and unresolved-destination governance
 
-## 4.3 Failure modes
+Unresolved free-text destinations are classified as `unknown` with zero distance and `resolved=false` (package behaviour as of v0.1.x), so they do not silently enter international 0 km flight accounting. This creates an explicit **data-quality worklist** for offices: unresolved rate itself should be treated as a reportable quality indicator, not as automatic under-count acceptance. Gazetteer gaps remain a maintenance issue.
 
-Unresolved destinations no longer collapse to silent international 0 km flights; they surface as `unknown` with `resolved=false`. Gazetteer gaps (missing districts) remain a maintenance issue.
+## 4.3 Institutional process statistics (placeholder)
+
+*To be filled after data-governance approval:* de-identified process statistics for one academic year (resolution rate, unknown rate, trip-kind distribution, mode heuristic distribution, distance distribution)—**with or without** publishing absolute CO₂e totals.
 
 # 5. Discussion
 
@@ -108,11 +114,12 @@ Measurement tools do not by themselves reduce flying [@tseng2022; @schreuer2023]
 - Public OSRM has no SLA; road factor 1.4 is uncalibrated for Taiwan.  
 - Mode heuristics are not booking truth.  
 - Institutional case results require data-governance approval before publication.  
-- Single-author software release (2026) has short public history.
+- Single-author software release (2026) has short public history.  
+- Companion education/adoption study (classroom + staff appraisals) is out of scope here and will be reported separately if conducted.
 
 ## 5.4 Future work
 
-De-identified multi-year Fu Jen (or multi-campus) evaluation; factor tables versioned by inventory year; optional ICAO integration for aviation; user study with sustainability officers.
+De-identified multi-year Fu Jen (or multi-campus) process statistics; factor tables versioned by inventory year; optional ICAO integration for aviation; usability evaluation of export formats for inventory appendices.
 
 # 6. Conclusion
 

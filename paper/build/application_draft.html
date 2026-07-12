@@ -90,6 +90,12 @@ role="doc-biblioref">World Resources Institute and World Business
 Council for Sustainable Development 2013</a>)</span>. This paper
 addresses that gap with an open workflow and software package designed
 for Taiwanese HEI contexts.</p>
+<p><strong>Research questions.</strong><br />
+<em>RQ1:</em> What technical and organisational steps are required to
+turn free-text Traditional Chinese reimbursement ledgers into auditable
+distance-based Category 6 activity data?<br />
+<em>RQ2:</em> How sensitive are resulting screening totals to
+factor-profile choice and unresolved-destination handling?</p>
 <h1 id="related-work-and-research-gap">2. Related work and research
 gap</h1>
 <h2 id="hei-carbon-inventories-and-travel">2.1 HEI carbon inventories
@@ -227,32 +233,49 @@ Metrics are <strong>regression accuracies</strong>, not independent
 multi-rater validation. Unresolved free-text strings are required to
 classify as <code>unknown</code> with zero distance (under-reporting
 risk if misused without review of unresolved rows).</p>
-<h1 id="results-synthetic-evaluation">4. Results (synthetic
-evaluation)</h1>
-<h2 id="trip-kind-and-mode-heuristic-regression">4.1 Trip-kind and
-mode-heuristic regression</h2>
-<p>On <code>examples/sample_travel_gold_50.csv</code> (<em>n</em> = 52),
-offline evaluation (geodesic fallback, no public OSRM required) yields
-kind accuracy 1.0 and mode-heuristic accuracy 1.0 as
-<strong>self-consistency / regression</strong> metrics. Aggregate
-distance on this synthetic set is on the order of ~8.9×10⁴ km; screening
-CO₂e exceeds the <code>taiwan_cfp</code> profile aggregate because
-private-car factors are higher under screening.</p>
-<h2 id="factor-sensitivity">4.2 Factor sensitivity</h2>
-<p>Applying <code>sensitivity_compare</code> on representative legs
-(e.g. 100 km domestic road) shows large relative differences when car
-factors move from screening 0.21 to CFP-oriented 0.115 kg/km,
-underscoring that inventory totals are factor-dominated once distances
-exist <span class="citation" data-cites="ghgprotocol_cat6 moenv_cfp">(<a
-href="#ref-ghgprotocol_cat6" role="doc-biblioref">World Resources
-Institute and World Business Council for Sustainable Development
-2013</a>; <a href="#ref-moenv_cfp" role="doc-biblioref">環境部
-2024b</a>)</span>.</p>
-<h2 id="failure-modes">4.3 Failure modes</h2>
-<p>Unresolved destinations no longer collapse to silent international 0
-km flights; they surface as <code>unknown</code> with
-<code>resolved=false</code>. Gazetteer gaps (missing districts) remain a
-maintenance issue.</p>
+<h1 id="results">4. Results</h1>
+<blockquote>
+<p><strong>Note on synthetic metrics.</strong> Trip-kind /
+mode-heuristic scores of 1.0 on the author-maintained gold set are
+reported under <strong>§3.3 Quality assurance</strong> as regression
+checks, <strong>not</strong> as independent validation findings.</p>
+</blockquote>
+<h2 id="factor-sensitivity-workflow-implication">4.1 Factor sensitivity
+(workflow implication)</h2>
+<p>Applying <code>sensitivity_compare</code> and dual-profile batch runs
+shows that, once distances exist, inventory-like totals are
+<strong>factor-dominated</strong>: moving private-car factors from
+screening 0.21 to CFP-oriented 0.115 kg/km changes leg-level CO₂e
+substantially <span class="citation"
+data-cites="ghgprotocol_cat6 moenv_cfp">(<a href="#ref-ghgprotocol_cat6"
+role="doc-biblioref">World Resources Institute and World Business
+Council for Sustainable Development 2013</a>; <a href="#ref-moenv_cfp"
+role="doc-biblioref">環境部 2024b</a>)</span>. Full-ledger tornado-style
+tables (screening vs <code>taiwan_cfp</code>, optional aviation RFI
+scenarios citing <span class="citation"
+data-cites="lee2021 jungbluth2019">(<a href="#ref-lee2021"
+role="doc-biblioref"><span class="nocase">Lee et al.</span> 2021</a>; <a
+href="#ref-jungbluth2019" role="doc-biblioref">Jungbluth and Meili
+2019</a>)</span>) are the primary quantitative result of the current
+draft; absolute campus CO₂e totals are <strong>not</strong> claimed
+without an authorised de-identified institutional year.</p>
+<h2 id="failure-modes-and-unresolved-destination-governance">4.2 Failure
+modes and unresolved-destination governance</h2>
+<p>Unresolved free-text destinations are classified as
+<code>unknown</code> with zero distance and <code>resolved=false</code>
+(package behaviour as of v0.1.x), so they do not silently enter
+international 0 km flight accounting. This creates an explicit
+<strong>data-quality worklist</strong> for offices: unresolved rate
+itself should be treated as a reportable quality indicator, not as
+automatic under-count acceptance. Gazetteer gaps remain a maintenance
+issue.</p>
+<h2 id="institutional-process-statistics-placeholder">4.3 Institutional
+process statistics (placeholder)</h2>
+<p><em>To be filled after data-governance approval:</em> de-identified
+process statistics for one academic year (resolution rate, unknown rate,
+trip-kind distribution, mode heuristic distribution, distance
+distribution)—<strong>with or without</strong> publishing absolute CO₂e
+totals.</p>
 <h1 id="discussion">5. Discussion</h1>
 <h2 id="implications-for-hei-sustainability-offices">5.1 Implications
 for HEI sustainability offices</h2>
@@ -291,12 +314,17 @@ Taiwan.<br />
 <li>Institutional case results require data-governance approval before
 publication.<br />
 </li>
-<li>Single-author software release (2026) has short public history.</li>
+<li>Single-author software release (2026) has short public
+history.<br />
+</li>
+<li>Companion education/adoption study (classroom + staff appraisals) is
+out of scope here and will be reported separately if conducted.</li>
 </ul>
 <h2 id="future-work">5.4 Future work</h2>
-<p>De-identified multi-year Fu Jen (or multi-campus) evaluation; factor
-tables versioned by inventory year; optional ICAO integration for
-aviation; user study with sustainability officers.</p>
+<p>De-identified multi-year Fu Jen (or multi-campus) process statistics;
+factor tables versioned by inventory year; optional ICAO integration for
+aviation; usability evaluation of export formats for inventory
+appendices.</p>
 <h1 id="conclusion">6. Conclusion</h1>
 <p>We presented an open, testable workflow for turning Traditional
 Chinese free-text HEI travel ledgers into distance-based Scope 3
