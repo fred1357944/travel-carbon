@@ -112,3 +112,4 @@
 
 - 2026-07-12｜travel-carbon｜使用者要求 1–3 轉向**應用期刊**（IJSHE / Sustainability／大學永續相關），不再只鎖 JOSS｜本矩陣寫入；VENUE_LEDGER 登記；長稿＋文獻＋pandoc 包啟動。**首投尚未拍板**→狀態 AMBER。
 - 2026-07-12｜travel-carbon｜使用者拍板 **雙發**：①Education and Information Technologies＝**行政數位工具被永續單位採用**＋**課堂教學／學生回饋／永續素養學程**；②IJSHE 等＝行政盤查主線｜10639 從「硬塞碳工具」改為 EdTech+adoption＝合理；**兩篇必須不同 RQ／證據**；建議 2026 先跑課＋採用訪談。
+- 2026-07-12｜travel-carbon｜七題定案：統計系課嵌入（對齊 DT 非隸屬）；簡審；**中心自有資料可去識別**；訪談~10；**質性主**；署名**賴＋李正吉**；不急｜S 升級（過程統計可控）但須**非作者唯一簽核**＋E 訪談**外單位≥6**防 insider；SSOT=`docs/RESEARCH_DECISIONS.md`。

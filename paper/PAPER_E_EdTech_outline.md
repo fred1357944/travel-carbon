@@ -1,15 +1,16 @@
 # Paper E — Education and Information Technologies 大綱
 
 **工作標題（英）**  
-*Adopting administrative carbon tools in university sustainability work and teaching: A classroom-and-office deployment of an open travel-carbon workflow*
+*Making Scope 3 inspectable: an open travel-carbon tool as a boundary object in statistics teaching and campus sustainability administration*
 
 **工作標題（中）**  
-行政差旅碳工具的採用與教學：開源工作流於大學永續單位與永續素養課堂的部署研究
+讓 Scope 3 可被檢查：開源差旅碳工具作為統計教學與校園永續行政的邊界物件
 
 **目標刊**：Education and Information Technologies (Springer, journal 10639)  
-**狀態**：大綱（2026-07-12）— 待試教／訪談數據  
+**狀態**：質性個案定案（2026-07-12）— 待試教／訪談  
+**作者**：賴弘翌、李正吉  
 **軟體**：https://github.com/fred1357944/travel-carbon  
-**與 Paper S 邊界**：見 `docs/VENUE_MATRIX_travel_carbon.md` §4
+**定案 SSOT**：`docs/RESEARCH_DECISIONS.md`
 
 ---
 
@@ -59,9 +60,10 @@
 
 ### 4.1 課程窗口
 
-- 載體：輔大**永續素養學程**相關課程／工作坊（正式課名投稿前填）  
-- 時數：建議 **6–9 小時**（三週單元）或一日工作坊＋作業  
-- 對象：修素養課之大學部／研究生（說明抽樣）
+- 載體：樂觀——**統計系課程**嵌入 3 堂（課名洽談中）  
+- **論文定位**：**對齊** 114 永續素養（DT）通識改革框架，**不宣稱**該課掛 DT 標籤  
+- Hook：messy data／missing／measurement model（非「為何修永續」）  
+- 對象：統計系大學部為主
 
 ### 4.2 三節結構
 
@@ -81,10 +83,12 @@
 
 ## 5. 永續單位採用研究（可與課堂同季）
 
-### 5.1 對象（示意）
+### 5.1 對象（定案）
 
-- 永續發展中心／委員會幕僚  
-- 環安衛、總務／出納、碳盤查承辦（1–5 人深度即可）
+- 約 **10 人**；**外單位 ≥6**，中心內 ≤3–4（標 insider）  
+- 見 `teaching/interview_sampling_matrix.md`  
+- **中心＝deployment site**；採用張力主力在總務／出納／環安／資訊／院系  
+- 李正吉：不參與中心同仁訪談現場與去識別前稿
 
 ### 5.2 問題焦點
 
@@ -108,10 +112,13 @@
 | 課前–課後短問卷 | 描述統計；配對檢定（樣本夠才做） |
 | 開放題／反思 | 主題分析 |
 | 系統 log（可選） | 解析成功／失敗、操作步驟時間 |
-| 訪談 | 主題編碼：促成條件、阻力、意義建構 |
-| 三角 | 課堂 × 單位 × 系統行為 |
+| 訪談 | 主題分析（Braun & Clarke 六步可引）；雙人編碼（李＝第二編碼）；member check |
+| 問卷 | 僅描述統計＋質性開放題（B7/B8、D）；**不做**小樣本配對檢定當主宣稱 |
+| 三角 | 訪談 × 課堂產物 × field notes |
 
-**倫理**：IRB／校內研究倫理或免除審查依輔大規定；知情同意；可撤回；資料去識別。
+**倫理**：輔大**簡審**；文號先於納入論文之資料；學生：研究同意與作業計分分離；**權力關係**：主任不招募／不在場於下屬受訪、不觸去識別前逐字稿。  
+
+**Reflexivity（約 150 字，兩作者）**：賴＝工具作者＋中心成員＋研究者；李＝中心主管＋共同作者＋第二編碼；緩解＝外單位為訪談主力、權力關係三句、雙人編碼、揭露任職。
 
 ---
 

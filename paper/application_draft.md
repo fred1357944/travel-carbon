@@ -1,10 +1,10 @@
 ---
 title: "From free-text reimbursement ledgers to Scope 3 Category 6 distances: an open workflow for Taiwanese higher-education business-travel carbon accounting"
-author: "Hung-Yi Lai"
-affiliation: "Fu Jen Catholic University, New Taipei City, Taiwan"
+author: "Hung-Yi Lai and Cheng-Chi Lee"
+affiliation: "Center for Sustainable Development and Institutional Research, Fu Jen Catholic University, New Taipei City, Taiwan"
 date: 2026-07-12
-target_venues: "IJSHE (primary candidate) | Sustainability (MDPI, APC) | HEI sustainability forums"
-status: "working draft — synthetic evaluation only; institutional de-identified case TBD"
+target_venues: "IJSHE (primary) — quality over speed"
+status: "working draft — de-identified institutional process statistics feasible (center holds data); formal written approval required (non-author-only sign-off)"
 bibliography: references.bib
 ---
 

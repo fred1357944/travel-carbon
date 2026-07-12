@@ -24,7 +24,7 @@
 | 檔案 | 說明 |
 |------|------|
 | `lesson_plan_3sessions.md` | 三堂教案 |
-| `survey_v0.1.md` | 課前／課後問卷 |
+| `survey_v0.2.md（主用；v0.1 舊）` | 課前／課後問卷 |
 | `interview_guide_v0.1.md` | 永續／行政採用訪談大綱 |
 | `data/teaching_ledger_40.csv` | **加長合成教學帳**（40 筆） |
 | `data/teaching_ledger_40_key.csv` | 教師對照（系統離線輸出） |
@@ -39,3 +39,6 @@ python -m travel_carbon.eval_batch --gold examples/sample_travel_gold_50.csv --o
 ```
 
 GUI：`python travel_distance_calculator_gui_cached_efficient.py`
+
+
+定案見 `docs/RESEARCH_DECISIONS.md`。
