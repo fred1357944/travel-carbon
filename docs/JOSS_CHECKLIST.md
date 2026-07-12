@@ -29,6 +29,7 @@ Full submit steps: **`docs/JOSS_SUBMISSION.md`**.
 | Offline gold eval | ✅ | `sample_travel_gold_50.csv` kind/mode = 1.0 |
 | Emission-factor honesty | ✅ | `docs/emission_factors_notes.md` |
 | GUI still runnable | ✅ | `travel_distance_calculator_gui_cached_efficient.py` |
+| CONTRIBUTING / issue template | ✅ | CONTRIBUTING.md + bug template |
 | ORCID / affiliation confirm | ⚠️ | Author placeholder fields in paper front matter |
 | Institutional consent wording | ⚠️ | Fu Jen case only if approved |
 

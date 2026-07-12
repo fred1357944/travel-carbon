@@ -222,4 +222,5 @@ def classify_trip_kind(destination: str) -> str:
                 return "international"
             if t == "international":
                 return "international"
-    return "international" if not is_domestic(d) else "mainland"
+    # Unresolved free text must NOT silently become international (0 km / 0 kg).
+    return "unknown"

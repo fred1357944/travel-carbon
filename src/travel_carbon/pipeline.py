@@ -72,10 +72,12 @@ def estimate_trip(
         float(dist.get("距離(km)") or 0),
         factors=factors,
     )
+    resolved = trip_kind != "unknown" and float(dist.get("距離(km)") or 0) > 0
     return {
         "input": destination,
         "normalized": handled,
         "kind": trip_kind,
+        "resolved": resolved,
         "distance": dist,
         "carbon": carbon,
         "factor_profile": factor_profile,

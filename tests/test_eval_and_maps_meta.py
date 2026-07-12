@@ -9,6 +9,14 @@ def test_empty_destination_unknown():
     r = estimate_trip("")
     assert r["kind"] == "unknown"
     assert r["distance"]["距離(km)"] == 0
+    assert r.get("resolved") is False
+
+
+def test_unresolved_junk_not_silent_international():
+    r = estimate_trip("完全虛構地名QQQ")
+    assert r["kind"] == "unknown"
+    assert r["distance"]["距離(km)"] == 0
+    assert r.get("resolved") is False
 
 
 def test_gold_eval_perfect_on_sample():
