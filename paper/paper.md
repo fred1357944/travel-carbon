@@ -16,9 +16,10 @@ authors:
 affiliations:
   - name: "Fu Jen Catholic University, New Taipei City, Taiwan"
     index: 1
-date: 11 July 2026
+date: 12 July 2026
 bibliography: paper.bib
 repository: https://github.com/fred1357944/travel-carbon
+# archive_doi: "10.5281/zenodo.XXXXXXX"  # set after Zenodo (see docs/JOSS_SUBMISSION.md)
 ---
 
 # Summary

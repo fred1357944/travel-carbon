@@ -1,6 +1,8 @@
 # JOSS readiness checklist (Path A)
 
-Status snapshot: **2026-07-11**, package `travel-carbon` **v0.1.0**, local git only (no public remote yet).
+Status snapshot: **2026-07-12**, package `travel-carbon` **v0.1.0**,  
+public repo https://github.com/fred1357944/travel-carbon  
+Full submit steps: **`docs/JOSS_SUBMISSION.md`**.
 
 ## Required for submission
 

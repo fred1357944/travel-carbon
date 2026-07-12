@@ -96,6 +96,16 @@
 | CI | **success** (Python 3.10 + 3.12) |
 
 
+
+## Loop 9 — Zenodo/JOSS submission guide (2026-07-12)
+
+| Item | Evidence |
+|------|----------|
+| `docs/JOSS_SUBMISSION.md` | Zenodo link steps + JOSS form checklist + post-DOI commands |
+| paper date | 12 July 2026; `archive_doi` placeholder commented |
+| Blocker for submit | User Zenodo OAuth + ORCID (browser) |
+
+
 ## Still open (next loops)
 
 - [x] **Public GitHub remote**: https://github.com/fred1357944/travel-carbon

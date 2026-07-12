@@ -115,4 +115,7 @@ MIT — see `LICENSE`.
 
 ## Status
 
-**v0.1.0 alpha** — installable library, offline gold eval, CI, JOSS paper draft (`paper/paper.md`). GUI remains the operational batch entry point. See `docs/JOSS_CHECKLIST.md`.
+**v0.1.0 alpha** — installable library, offline gold eval, CI, JOSS paper draft (`paper/paper.md`). GUI remains the operational batch entry point.
+
+- Checklist: `docs/JOSS_CHECKLIST.md`
+- **Zenodo + JOSS submit steps:** `docs/JOSS_SUBMISSION.md`
