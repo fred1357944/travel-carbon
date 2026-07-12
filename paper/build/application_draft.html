@@ -1,0 +1,502 @@
+<h1 id="abstract">Abstract</h1>
+<p><strong>Purpose</strong> — Higher-education institutions (HEIs) must
+increasingly quantify business-travel emissions under GHG Protocol Scope
+3 Category 6 and ISO 14064-style organisational inventories. In many
+Taiwanese universities, activity evidence resides in free-text
+reimbursement Excel ledgers rather than structured booking extracts.
+This paper presents an open workflow and software package
+(<code>travel-carbon</code>) that recovers destinations from Traditional
+Chinese free text, estimates hybrid road/flight distances, and produces
+transparent distance-based CO₂e screening estimates with optional map
+audit trails.</p>
+<p><strong>Design/methodology/approach</strong> — We describe a
+distance-based Category 6 pipeline: gazetteer- and rule-based
+destination normalisation; OSRM road routing (optional) with geodesic
+fallback for Taiwan mainland trips; geodesic island and international
+flight legs; mode heuristics; and screening versus Taiwan
+product-CFP-oriented factor profiles. Quality assurance combines unit
+tests, continuous integration, and a synthetic gold set (<em>n</em> =
+52) for trip-kind and mode-heuristic regression checks.</p>
+<p><strong>Findings</strong> — On the synthetic gold set, offline
+trip-kind and mode-heuristic accuracies both reach 1.0 as regression
+metrics (author-maintained labels). Screening and
+<code>taiwan_cfp</code> factor profiles produce different aggregate CO₂e
+on the same distances, illustrating factor sensitivity. Unresolved
+destinations are flagged as unknown rather than silent zero-kilometre
+international flights.</p>
+<p><strong>Practical implications</strong> — Sustainability and finance
+offices can batch-process Chinese free-text ledgers with inspectable
+open-source code, then recalibrate factors for formal inventory
+years.</p>
+<p><strong>Originality/value</strong> — Complements multi-scope HEI
+tools (e.g. GES 1point5, CO2UNV) by targeting Traditional Chinese
+administrative free-text ledgers and Taiwan-specific mainland/island
+routing in one installable package.</p>
+<p><strong>Keywords</strong> — higher education; Scope 3; business
+travel; carbon footprint; Taiwan; open-source software; GHG Protocol
+Category 6</p>
+<p><strong>Paper type</strong> — Research paper / tool-and-workflow case
+(working draft)</p>
+<h1 id="introduction">1. Introduction</h1>
+<p>Business travel is a material and often under-measured component of
+university greenhouse-gas (GHG) inventories <span class="citation"
+data-cites="ciers2019 helmers2021 kiehle2023">(<a href="#ref-ciers2019"
+role="doc-biblioref">Ciers et al. 2019</a>; <a href="#ref-helmers2021"
+role="doc-biblioref">Helmers et al. 2021</a>; <a href="#ref-kiehle2023"
+role="doc-biblioref">Kiehle et al. 2023</a>)</span>. Under the GHG
+Protocol, emissions from employee travel in third-party vehicles fall in
+Scope 3 Category 6 <span class="citation"
+data-cites="ghgprotocol_cat6 ghgprotocol_scope3">(<a
+href="#ref-ghgprotocol_cat6" role="doc-biblioref">World Resources
+Institute and World Business Council for Sustainable Development
+2013</a>, <a href="#ref-ghgprotocol_scope3"
+role="doc-biblioref">2011</a>)</span>. ISO 14064-1 provides
+organisational quantification and reporting guidance used by many
+Taiwanese HEIs <span class="citation"
+data-cites="iso14064_1_2018 tsai2025">(<a href="#ref-iso14064_1_2018"
+role="doc-biblioref">International Organization for Standardization
+2018</a>; <a href="#ref-tsai2025" role="doc-biblioref">Tsai et al.
+2025</a>)</span>.</p>
+<p>Prior research documents academic flying’s contribution to campus
+footprints <span class="citation"
+data-cites="ciers2019 wynes2018ubc wynes2019">(<a href="#ref-ciers2019"
+role="doc-biblioref">Ciers et al. 2019</a>; <a href="#ref-wynes2018ubc"
+role="doc-biblioref">Wynes and Donner 2018</a>; <a href="#ref-wynes2019"
+role="doc-biblioref">Wynes et al. 2019</a>)</span>, policy gaps in
+university climate plans <span class="citation"
+data-cites="schmidt2022">(<a href="#ref-schmidt2022"
+role="doc-biblioref">Schmidt 2022</a>)</span>, and practice-based
+barriers to reducing academic air travel <span class="citation"
+data-cites="tseng2022 schreuer2023 sunley2025">(<a href="#ref-tseng2022"
+role="doc-biblioref">Tseng et al. 2022</a>; <a href="#ref-schreuer2023"
+role="doc-biblioref"><span class="nocase">Schreuer et al.</span>
+2023</a>; <a href="#ref-sunley2025" role="doc-biblioref"><span
+class="nocase">Sunley et al.</span> 2025</a>)</span>. Reviews of HEI
+carbon-footprint methods highlight incomplete Scope 3 data and
+heterogeneous boundaries <span class="citation"
+data-cites="vallsval2021 helmers2021 deda2025">(<a
+href="#ref-vallsval2021" role="doc-biblioref">Valls-Val and Bovea
+2021</a>; <a href="#ref-helmers2021" role="doc-biblioref">Helmers et al.
+2021</a>; <a href="#ref-deda2025" role="doc-biblioref"><span
+class="nocase">Deda et al.</span> 2025</a>)</span>.</p>
+<p>Less attention has been paid to the <strong>operational data
+path</strong> from messy East Asian administrative ledgers—free-text
+destinations, character variants (台/臺), district names—to
+distance-based Category 6 activity data. Spend-based methods are common
+when distances are missing, but they can be sensitive to prices and poor
+for year-on-year operational management <span class="citation"
+data-cites="ghgprotocol_cat6">(<a href="#ref-ghgprotocol_cat6"
+role="doc-biblioref">World Resources Institute and World Business
+Council for Sustainable Development 2013</a>)</span>. This paper
+addresses that gap with an open workflow and software package designed
+for Taiwanese HEI contexts.</p>
+<h1 id="related-work-and-research-gap">2. Related work and research
+gap</h1>
+<h2 id="hei-carbon-inventories-and-travel">2.1 HEI carbon inventories
+and travel</h2>
+<p>University carbon-footprint studies emphasise energy, commuting, and
+business travel <span class="citation"
+data-cites="vallsval2021 kiehle2023 helmers2021">(<a
+href="#ref-vallsval2021" role="doc-biblioref">Valls-Val and Bovea
+2021</a>; <a href="#ref-kiehle2023" role="doc-biblioref">Kiehle et al.
+2023</a>; <a href="#ref-helmers2021" role="doc-biblioref">Helmers et al.
+2021</a>)</span>. Air travel can dominate partial Scope 3 mobility
+totals at research-intensive campuses <span class="citation"
+data-cites="ciers2019 helmers2021">(<a href="#ref-ciers2019"
+role="doc-biblioref">Ciers et al. 2019</a>; <a href="#ref-helmers2021"
+role="doc-biblioref">Helmers et al. 2021</a>)</span>. Mitigation
+research examines institutional manoeuvring room and sustainable travel
+policies <span class="citation"
+data-cites="schreuer2023 sunley2025 goerlinger2023">(<a
+href="#ref-schreuer2023" role="doc-biblioref"><span
+class="nocase">Schreuer et al.</span> 2023</a>; <a
+href="#ref-sunley2025" role="doc-biblioref"><span class="nocase">Sunley
+et al.</span> 2025</a>; <a href="#ref-goerlinger2023"
+role="doc-biblioref"><span class="nocase">Görlinger et al.</span>
+2023</a>)</span>. Taiwanese HEIs applying ISO 14064-1 report that
+commuting and business travel are material yet data-constrained <span
+class="citation" data-cites="tsai2025">(<a href="#ref-tsai2025"
+role="doc-biblioref">Tsai et al. 2025</a>)</span>.</p>
+<h2 id="tools-for-campus-and-research-carbon-accounting">2.2 Tools for
+campus and research carbon accounting</h2>
+<p>Open tools include GES 1point5 for research laboratories <span
+class="citation" data-cites="mariette2022">(<a href="#ref-mariette2022"
+role="doc-biblioref"><span class="nocase">Mariette et al.</span>
+2022</a>)</span>, CO2UNV for configurable university footprints <span
+class="citation" data-cites="vallsval2022">(<a href="#ref-vallsval2022"
+role="doc-biblioref">Valls-Val and Bovea 2022</a>)</span>, and other
+open estimators <span class="citation" data-cites="auger2021">(<a
+href="#ref-auger2021" role="doc-biblioref"><span class="nocase">Auger et
+al.</span> 2021</a>)</span>. These systems typically assume structured
+activity inputs. Commercial platforms and ICAO’s flight calculator <span
+class="citation" data-cites="icao_icec">(<a href="#ref-icao_icec"
+role="doc-biblioref">International Civil Aviation Organization
+2024</a>)</span> address aviation with richer aircraft data, but rarely
+ingest free-text Chinese reimbursement rows.</p>
+<h2 id="methodological-issues-in-travel-emissions">2.3 Methodological
+issues in travel emissions</h2>
+<p>Category 6 methods include fuel-, distance-, and spend-based
+approaches <span class="citation" data-cites="ghgprotocol_cat6">(<a
+href="#ref-ghgprotocol_cat6" role="doc-biblioref">World Resources
+Institute and World Business Council for Sustainable Development
+2013</a>)</span>. Aviation climate impact includes non-CO₂ effects <span
+class="citation" data-cites="lee2021 jungbluth2019">(<a
+href="#ref-lee2021" role="doc-biblioref"><span class="nocase">Lee et
+al.</span> 2021</a>; <a href="#ref-jungbluth2019"
+role="doc-biblioref">Jungbluth and Meili 2019</a>)</span>. National
+conversion factors (e.g. UK DESNZ/DEFRA) <span class="citation"
+data-cites="defra_conversion_factors">(<a
+href="#ref-defra_conversion_factors" role="doc-biblioref">UK Department
+for Energy Security and Net Zero 2025</a>)</span> and Taiwan MOENV fuel
+tables <span class="citation" data-cites="moenv_113_factors">(<a
+href="#ref-moenv_113_factors" role="doc-biblioref">環境部
+2024a</a>)</span> versus product carbon footprints <span
+class="citation" data-cites="moenv_cfp">(<a href="#ref-moenv_cfp"
+role="doc-biblioref">環境部 2024b</a>)</span> must not be conflated.
+Chinese toponym extraction research highlights free-text geo-resolution
+challenges <span class="citation" data-cites="kuai2020">(<a
+href="#ref-kuai2020" role="doc-biblioref"><span class="nocase">Kuai et
+al.</span> 2020</a>)</span>.</p>
+<h2 id="gap">2.4 Gap</h2>
+<p>We find limited open methods that jointly (i) normalise Traditional
+Chinese free-text HEI travel destinations, (ii) apply Taiwan mainland
+road versus offshore flight policies, (iii) expose distance-based
+screening factors with explicit honesty about Taiwan statutory sources,
+and (iv) ship reproducible open-source software with automated tests.
+This paper presents such a workflow.</p>
+<h1 id="methods">3. Methods</h1>
+<h2 id="system-overview">3.1 System overview</h2>
+<p>The <code>travel-carbon</code> package <span class="citation"
+data-cites="travel_carbon_software">(<a
+href="#ref-travel_carbon_software" role="doc-biblioref">Lai
+2026</a>)</span> implements:</p>
+<ol type="1">
+<li><strong>Destination recovery</strong> — aliases, 台/臺
+normalisation, district→city and city→airport maps <span
+class="citation" data-cites="kuai2020">(<a href="#ref-kuai2020"
+role="doc-biblioref"><span class="nocase">Kuai et al.</span>
+2020</a>)</span>.<br />
+</li>
+<li><strong>Distance estimation</strong> — optional OSRM driving <span
+class="citation" data-cites="huber2016 osrm">(<a href="#ref-huber2016"
+role="doc-biblioref">Huber and Rust 2016</a>; <a href="#ref-osrm"
+role="doc-biblioref">Project OSRM 2024</a>)</span>; geodesic×1.4 road
+fallback; geodesic island/international flights.<br />
+</li>
+<li><strong>Mode heuristics and factors</strong> — label- and
+distance-based mode assignment; screening versus <code>taiwan_cfp</code>
+profiles.<br />
+</li>
+<li><strong>Audit artefacts</strong> — optional Folium maps in the
+desktop GUI; <code>resolved</code> flags for unknown destinations.<br />
+</li>
+<li><strong>Evaluation harness</strong> — offline gold CSV scoring
+without personal data.</li>
+</ol>
+<p>Origin defaults to Fu Jen Catholic University for mainland driving;
+Songshan and Taoyuan airports for domestic island and international
+legs, respectively.</p>
+<h2 id="emission-factors-and-accounting-boundary">3.2 Emission factors
+and accounting boundary</h2>
+<p>We follow GHG Protocol Category 6 distance-based calculation in
+form:</p>
+<p>[ E = _i d_i EF_i ]</p>
+<p>Screening defaults shipped with the software are
+<strong>operational</strong> kg CO₂e/km values. They are
+<strong>not</strong> a direct mapping to Taiwan MOENV’s 2024
+organisation fuel-factor gazette (kg/TJ) <span class="citation"
+data-cites="moenv_113_factors">(<a href="#ref-moenv_113_factors"
+role="doc-biblioref">環境部 2024a</a>)</span>. Product-CFP pkm factors
+<span class="citation" data-cites="moenv_cfp">(<a href="#ref-moenv_cfp"
+role="doc-biblioref">環境部 2024b</a>)</span> provide closer
+Taiwan-facing sensitivity values for cars and high-speed rail; aviation
+remains uncertain and may require ICAO-style methods <span
+class="citation" data-cites="icao_icec">(<a href="#ref-icao_icec"
+role="doc-biblioref">International Civil Aviation Organization
+2024</a>)</span> for formal inventories. Radiative forcing multipliers
+are omitted by default <span class="citation"
+data-cites="lee2021 jungbluth2019">(<a href="#ref-lee2021"
+role="doc-biblioref"><span class="nocase">Lee et al.</span> 2021</a>; <a
+href="#ref-jungbluth2019" role="doc-biblioref">Jungbluth and Meili
+2019</a>)</span>.</p>
+<h2 id="quality-assurance-design">3.3 Quality assurance design</h2>
+<p>Unit tests and CI (Python 3.10/3.12) cover pure functions. A
+synthetic gold set (<em>n</em> = 52) labels expected trip kinds
+(mainland/island/international/unknown) and expected mode substrings.
+Metrics are <strong>regression accuracies</strong>, not independent
+multi-rater validation. Unresolved free-text strings are required to
+classify as <code>unknown</code> with zero distance (under-reporting
+risk if misused without review of unresolved rows).</p>
+<h1 id="results-synthetic-evaluation">4. Results (synthetic
+evaluation)</h1>
+<h2 id="trip-kind-and-mode-heuristic-regression">4.1 Trip-kind and
+mode-heuristic regression</h2>
+<p>On <code>examples/sample_travel_gold_50.csv</code> (<em>n</em> = 52),
+offline evaluation (geodesic fallback, no public OSRM required) yields
+kind accuracy 1.0 and mode-heuristic accuracy 1.0 as
+<strong>self-consistency / regression</strong> metrics. Aggregate
+distance on this synthetic set is on the order of ~8.9×10⁴ km; screening
+CO₂e exceeds the <code>taiwan_cfp</code> profile aggregate because
+private-car factors are higher under screening.</p>
+<h2 id="factor-sensitivity">4.2 Factor sensitivity</h2>
+<p>Applying <code>sensitivity_compare</code> on representative legs
+(e.g. 100 km domestic road) shows large relative differences when car
+factors move from screening 0.21 to CFP-oriented 0.115 kg/km,
+underscoring that inventory totals are factor-dominated once distances
+exist <span class="citation" data-cites="ghgprotocol_cat6 moenv_cfp">(<a
+href="#ref-ghgprotocol_cat6" role="doc-biblioref">World Resources
+Institute and World Business Council for Sustainable Development
+2013</a>; <a href="#ref-moenv_cfp" role="doc-biblioref">環境部
+2024b</a>)</span>.</p>
+<h2 id="failure-modes">4.3 Failure modes</h2>
+<p>Unresolved destinations no longer collapse to silent international 0
+km flights; they surface as <code>unknown</code> with
+<code>resolved=false</code>. Gazetteer gaps (missing districts) remain a
+maintenance issue.</p>
+<h1 id="discussion">5. Discussion</h1>
+<h2 id="implications-for-hei-sustainability-offices">5.1 Implications
+for HEI sustainability offices</h2>
+<p>Distance-based Category 6 accounting is only as good as destination
+recovery and factor choice <span class="citation"
+data-cites="ghgprotocol_cat6 deda2025">(<a href="#ref-ghgprotocol_cat6"
+role="doc-biblioref">World Resources Institute and World Business
+Council for Sustainable Development 2013</a>; <a href="#ref-deda2025"
+role="doc-biblioref"><span class="nocase">Deda et al.</span>
+2025</a>)</span>. Open workflows can improve transparency and
+auditability relative to opaque spreadsheet macros, provided unresolved
+rows and factor years are reviewed.</p>
+<h2 id="relation-to-travel-reduction-agendas">5.2 Relation to travel
+reduction agendas</h2>
+<p>Measurement tools do not by themselves reduce flying <span
+class="citation" data-cites="tseng2022 schreuer2023">(<a
+href="#ref-tseng2022" role="doc-biblioref">Tseng et al. 2022</a>; <a
+href="#ref-schreuer2023" role="doc-biblioref"><span
+class="nocase">Schreuer et al.</span> 2023</a>)</span>. They can,
+however, support policy monitoring and department-level feedback once
+activity data exist <span class="citation"
+data-cites="schmidt2022 sunley2025">(<a href="#ref-schmidt2022"
+role="doc-biblioref">Schmidt 2022</a>; <a href="#ref-sunley2025"
+role="doc-biblioref"><span class="nocase">Sunley et al.</span>
+2025</a>)</span>.</p>
+<h2 id="limitations">5.3 Limitations</h2>
+<ul>
+<li>Synthetic gold is not external validation; no MAPE against official
+mileages yet.<br />
+</li>
+<li>Public OSRM has no SLA; road factor 1.4 is uncalibrated for
+Taiwan.<br />
+</li>
+<li>Mode heuristics are not booking truth.<br />
+</li>
+<li>Institutional case results require data-governance approval before
+publication.<br />
+</li>
+<li>Single-author software release (2026) has short public history.</li>
+</ul>
+<h2 id="future-work">5.4 Future work</h2>
+<p>De-identified multi-year Fu Jen (or multi-campus) evaluation; factor
+tables versioned by inventory year; optional ICAO integration for
+aviation; user study with sustainability officers.</p>
+<h1 id="conclusion">6. Conclusion</h1>
+<p>We presented an open, testable workflow for turning Traditional
+Chinese free-text HEI travel ledgers into distance-based Scope 3
+Category 6 screening estimates with Taiwan-aware routing and explicit
+factor honesty. The package is available at
+https://github.com/fred1357944/travel-carbon. Application-journal
+readiness requires institutional case results beyond synthetic
+regression tests; the present draft is a methods-and-tool foundation for
+that next step.</p>
+<h1 id="acknowledgements">Acknowledgements</h1>
+<p>OpenStreetMap, OSRM, Folium, and Geopy communities. Fu Jen Catholic
+University sustainability-oriented travel-ledger workflows motivated
+development; only synthetic examples are distributed.</p>
+<h1 id="ai-usage-disclosure">AI usage disclosure</h1>
+<p>Generative AI tools (including GitHub Copilot CLI and multi-model
+reviews) assisted scaffolding, drafting, and adversarial critique. The
+author validated code and takes responsibility for scientific
+claims.</p>
+<h1 class="unnumbered" id="references">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent"
+role="list">
+<div id="ref-auger2021" class="csl-entry" role="listitem">
+<span class="nocase">Auger, Corentin et al.</span> 2021.
+<span>“Open-Source Carbon Footprint Estimator: Development and
+University Declination.”</span> <em>Sustainability</em> 13 (8): 4315. <a
+href="https://doi.org/10.3390/su13084315">https://doi.org/10.3390/su13084315</a>.
+</div>
+<div id="ref-ciers2019" class="csl-entry" role="listitem">
+Ciers, J., A. Mandic, L. D. Toth, and G. Op ’t Veld. 2019. <span>“Carbon
+Footprint of Academic Air Travel: A Case Study in Switzerland.”</span>
+<em>Sustainability</em> 11 (1): 80. <a
+href="https://doi.org/10.3390/su11010080">https://doi.org/10.3390/su11010080</a>.
+</div>
+<div id="ref-deda2025" class="csl-entry" role="listitem">
+<span class="nocase">Deda, D. et al.</span> 2025. <span>“Advancing
+Carbon Footprint in Higher Education: An Integrated Methodology.”</span>
+<em>The International Journal of Life Cycle Assessment</em>, ahead of
+print. <a
+href="https://doi.org/10.1007/s11367-025-02514-y">https://doi.org/10.1007/s11367-025-02514-y</a>.
+</div>
+<div id="ref-goerlinger2023" class="csl-entry" role="listitem">
+<span class="nocase">Görlinger, S. et al.</span> 2023. <span>“An
+Evidence-Based Approach to Accelerate Flight Reduction in
+Academia.”</span> <em>Npj Climate Action</em>.
+</div>
+<div id="ref-helmers2021" class="csl-entry" role="listitem">
+Helmers, Eckard, Chia Chien Chang, and Justin Dauwels. 2021.
+<span>“Carbon Footprinting of Universities Worldwide: Part
+<span>I</span>—Objective Comparison by Standardised Metrics.”</span>
+<em>Environmental Sciences Europe</em> 33: 30. <a
+href="https://doi.org/10.1186/s12302-021-00454-6">https://doi.org/10.1186/s12302-021-00454-6</a>.
+</div>
+<div id="ref-huber2016" class="csl-entry" role="listitem">
+Huber, Stephan, and Christoph Rust. 2016. <span>“Calculate Travel Time
+and Distance with <span>OpenStreetMap</span> Data Using the Open Source
+Routing Machine (<span>OSRM</span>).”</span> <em>The Stata Journal</em>
+16 (2): 416–23.
+</div>
+<div id="ref-icao_icec" class="csl-entry" role="listitem">
+International Civil Aviation Organization. 2024. <em><span>ICAO</span>
+Carbon Emissions Calculator (<span>ICEC</span>) Methodology</em>. <a
+href="https://www.icao.int/environmental-protection/environmental-tools/icec">https://www.icao.int/environmental-protection/environmental-tools/icec</a>.
+</div>
+<div id="ref-iso14064_1_2018" class="csl-entry" role="listitem">
+International Organization for Standardization. 2018.
+<em><span>ISO</span> 14064-1:2018 Greenhouse Gases — Part 1:
+Specification with Guidance at the Organization Level for Quantification
+and Reporting of Greenhouse Gas Emissions and Removals</em>. ISO.
+</div>
+<div id="ref-jungbluth2019" class="csl-entry" role="listitem">
+Jungbluth, Niels, and Christoph Meili. 2019. <span>“Recommendations for
+Calculation of the Global Warming Potential of Aviation Including the
+Radiative Forcing Index.”</span> <em>The International Journal of Life
+Cycle Assessment</em> 24: 404–11. <a
+href="https://doi.org/10.1007/s11367-018-1556-3">https://doi.org/10.1007/s11367-018-1556-3</a>.
+</div>
+<div id="ref-kiehle2023" class="csl-entry" role="listitem">
+Kiehle, Julia, Maria Kopsakangas-Savolainen, Markus Hilli, and Eva
+Pongrácz. 2023. <span>“Carbon Footprint at Institutions of Higher
+Education: The Case of the University of Oulu.”</span> <em>Journal of
+Environmental Management</em> 329: 117056. <a
+href="https://doi.org/10.1016/j.jenvman.2022.117056">https://doi.org/10.1016/j.jenvman.2022.117056</a>.
+</div>
+<div id="ref-kuai2020" class="csl-entry" role="listitem">
+<span class="nocase">Kuai, Xi, Renzhong Guo, Feng Zhang, et al.</span>
+2020. <span>“Spatial Context-Based Local Toponym Extraction and Chinese
+Textual Address Segmentation from Urban <span>POI</span> Data.”</span>
+<em>ISPRS International Journal of Geo-Information</em> 9 (3): 147. <a
+href="https://doi.org/10.3390/ijgi9030147">https://doi.org/10.3390/ijgi9030147</a>.
+</div>
+<div id="ref-travel_carbon_software" class="csl-entry" role="listitem">
+Lai, Hung-Yi. 2026. <em>Travel-Carbon: Distance-Based <span>Scope</span>
+3 Category 6 Helpers for Free-Text Chinese University Travel
+Ledgers</em>. Version 0.1.0. <a
+href="https://github.com/fred1357944/travel-carbon">https://github.com/fred1357944/travel-carbon</a>.
+</div>
+<div id="ref-lee2021" class="csl-entry" role="listitem">
+<span class="nocase">Lee, D. S., D. W. Fahey, A. Skowron, et al.</span>
+2021. <span>“The Contribution of Global Aviation to Anthropogenic
+Climate Forcing for 2000 to 2018.”</span> <em>Atmospheric
+Environment</em> 244: 117834. <a
+href="https://doi.org/10.1016/j.atmosenv.2020.117834">https://doi.org/10.1016/j.atmosenv.2020.117834</a>.
+</div>
+<div id="ref-mariette2022" class="csl-entry" role="listitem">
+<span class="nocase">Mariette, Jérôme et al.</span> 2022. <span>“An
+Open-Source Tool to Assess the Carbon Footprint of Research.”</span>
+<em>Environmental Research: Infrastructure and Sustainability</em>,
+ahead of print. <a
+href="https://doi.org/10.1088/2634-4505/ac84a4">https://doi.org/10.1088/2634-4505/ac84a4</a>.
+</div>
+<div id="ref-osrm" class="csl-entry" role="listitem">
+Project OSRM. 2024. <em>Open Source Routing Machine</em>. <a
+href="https://project-osrm.org/">https://project-osrm.org/</a>.
+</div>
+<div id="ref-schmidt2022" class="csl-entry" role="listitem">
+Schmidt, A. 2022. <span>“University Air Travel and Greenhouse Gas
+Mitigation: An Analysis of Higher Education Climate Policies.”</span>
+<em>International Journal of Sustainability in Higher Education</em> 23
+(6): 1426–42. <a
+href="https://doi.org/10.1108/IJSHE-07-2021-0316">https://doi.org/10.1108/IJSHE-07-2021-0316</a>.
+</div>
+<div id="ref-schreuer2023" class="csl-entry" role="listitem">
+<span class="nocase">Schreuer, A. et al.</span> 2023. <span>“Reducing
+Air Travel Emissions in Academia: An Exploration of Universities’
+Manoeuvring Room.”</span> <em>International Journal of Sustainability in
+Higher Education</em>, ahead of print. <a
+href="https://doi.org/10.1108/IJSHE-03-2022-0070">https://doi.org/10.1108/IJSHE-03-2022-0070</a>.
+</div>
+<div id="ref-sunley2025" class="csl-entry" role="listitem">
+<span class="nocase">Sunley, E. et al.</span> 2025. <span>“Sustainable
+Travel in Higher Education: A Review of Institutional Policies.”</span>
+<em>International Journal of Sustainability in Higher Education</em>,
+ahead of print. <a
+href="https://doi.org/10.1108/IJSHE-10-2024-0753">https://doi.org/10.1108/IJSHE-10-2024-0753</a>.
+</div>
+<div id="ref-tsai2025" class="csl-entry" role="listitem">
+Tsai, Shu-Yao, Mei-Ching Wang, Shun-Pei Yao, Gregory J. Tsay, and
+Chun-Ping Lin. 2025. <span>“Greenhouse Gas Emissions and Mitigation
+Strategies in Universities Under <span>ISO</span> 14064-1: Lessons for
+Global Higher Education Sustainability.”</span> <em>Sustainability</em>
+17 (21): 9462. <a
+href="https://doi.org/10.3390/su17219462">https://doi.org/10.3390/su17219462</a>.
+</div>
+<div id="ref-tseng2022" class="csl-entry" role="listitem">
+Tseng, S. H. Y., C. Lee, and J. Higham. 2022. <span>“Managing Academic
+Air Travel Emissions: Towards System-Wide Practice Change.”</span>
+<em>Transportation Research Part D: Transport and Environment</em> 113:
+103504. <a
+href="https://doi.org/10.1016/j.trd.2022.103504">https://doi.org/10.1016/j.trd.2022.103504</a>.
+</div>
+<div id="ref-defra_conversion_factors" class="csl-entry"
+role="listitem">
+UK Department for Energy Security and Net Zero. 2025. <em>Greenhouse Gas
+Reporting: Conversion Factors</em>. <a
+href="https://www.gov.uk/government/collections/government-conversion-factors-for-company-reporting">https://www.gov.uk/government/collections/government-conversion-factors-for-company-reporting</a>.
+</div>
+<div id="ref-vallsval2021" class="csl-entry" role="listitem">
+Valls-Val, Karen, and María D. Bovea. 2021. <span>“Carbon Footprint in
+Higher Education Institutions: A Literature Review and Prospects for
+Future Research.”</span> <em>Clean Technologies and Environmental
+Policy</em> 23: 2523–42. <a
+href="https://doi.org/10.1007/s10098-021-02180-2">https://doi.org/10.1007/s10098-021-02180-2</a>.
+</div>
+<div id="ref-vallsval2022" class="csl-entry" role="listitem">
+Valls-Val, Karen, and María D. Bovea. 2022. <span>“Carbon Footprint
+Assessment Tool for Universities: <span>CO2UNV</span>.”</span>
+<em>Sustainable Production and Consumption</em> 29: 791–804. <a
+href="https://doi.org/10.1016/j.spc.2021.11.020">https://doi.org/10.1016/j.spc.2021.11.020</a>.
+</div>
+<div id="ref-ghgprotocol_scope3" class="csl-entry" role="listitem">
+World Resources Institute, and World Business Council for Sustainable
+Development. 2011. <em>Corporate Value Chain (<span>Scope</span> 3)
+Accounting and Reporting Standard</em>. GHG Protocol. <a
+href="https://ghgprotocol.org/standards/scope-3-standard">https://ghgprotocol.org/standards/scope-3-standard</a>.
+</div>
+<div id="ref-ghgprotocol_cat6" class="csl-entry" role="listitem">
+World Resources Institute, and World Business Council for Sustainable
+Development. 2013. <em>Technical Guidance for Calculating Scope 3
+Emissions — Category 6: Business Travel</em>. GHG Protocol. <a
+href="https://ghgprotocol.org/sites/default/files/2022-12/Chapter6.pdf">https://ghgprotocol.org/sites/default/files/2022-12/Chapter6.pdf</a>.
+</div>
+<div id="ref-wynes2018ubc" class="csl-entry" role="listitem">
+Wynes, Seth, and Simon D. Donner. 2018. <em>Addressing Greenhouse Gas
+Emissions from Business-Related Air Travel at Public Institutions: A
+Case Study of the University of British Columbia</em>. Pacific Institute
+for Climate Solutions.
+</div>
+<div id="ref-wynes2019" class="csl-entry" role="listitem">
+Wynes, Seth, Simon D. Donner, Steuart Tannason, and Noni Nabors. 2019.
+<span>“Academic Air Travel Has a Limited Influence on Professional
+Success.”</span> <em>Journal of Cleaner Production</em> 226: 959–67. <a
+href="https://doi.org/10.1016/j.jclepro.2019.04.109">https://doi.org/10.1016/j.jclepro.2019.04.109</a>.
+</div>
+<div id="ref-moenv_113_factors" class="csl-entry" role="listitem">
+環境部. 2024a. <em>113年2月5日公告溫室氣體排放係數</em>. <a
+href="https://ghgregistry.moenv.gov.tw/">https://ghgregistry.moenv.gov.tw/</a>.
+</div>
+<div id="ref-moenv_cfp" class="csl-entry" role="listitem">
+環境部. 2024b. <em>產品碳足跡資訊網 / Open Data Product Carbon
+Footprints</em>. <a
+href="https://data.moenv.gov.tw/">https://data.moenv.gov.tw/</a>.
+</div>
+</div>
