@@ -106,6 +106,18 @@
 | Blocker for submit | User Zenodo OAuth + ORCID (browser) |
 
 
+
+## Loop 10 — application venue track (2026-07-12)
+
+| Item | Evidence |
+|------|----------|
+| Venue matrix | `docs/VENUE_MATRIX_travel_carbon.md` (IJSHE AMBER, Sustainability AMBER, JOSS backup) |
+| VENUE_LEDGER | travel-carbon row + decision log in `論文撰寫專案/VENUE_LEDGER.md` |
+| Literature | `paper/references.bib` ~28 keys + `CITATIONS_VERIFIED.md` |
+| Long draft | `paper/application_draft.md` |
+| Rendered refs | `paper/build/application_draft.html` (pandoc --citeproc) |
+
+
 ## Still open (next loops)
 
 - [x] **Public GitHub remote**: https://github.com/fred1357944/travel-carbon
