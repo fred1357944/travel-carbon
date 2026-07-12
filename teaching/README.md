@@ -21,8 +21,14 @@
 
 ## 檔案
 
-- `lesson_plan_3sessions.md` — 教案  
-- 合成資料沿用 repo `examples/sample_travel_records.csv` 與 gold 集  
+| 檔案 | 說明 |
+|------|------|
+| `lesson_plan_3sessions.md` | 三堂教案 |
+| `survey_v0.1.md` | 課前／課後問卷 |
+| `interview_guide_v0.1.md` | 永續／行政採用訪談大綱 |
+| `data/teaching_ledger_40.csv` | **加長合成教學帳**（40 筆） |
+| `data/teaching_ledger_40_key.csv` | 教師對照（系統離線輸出） |
+| `../examples/sample_travel_records.csv` | 短版合成 |  
 
 ## 軟體
 
